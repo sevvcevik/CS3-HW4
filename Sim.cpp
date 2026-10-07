@@ -15,6 +15,8 @@
 #include "TimeCode_Tests.h"
 #include "BigInteger.h" // to count the total number of cars, which may be a really large value
 
+//
+using namespace std;
 
 // Hard-code some time durations for ease of use, uie L to avoid overflow
 #define DURATION_10MIN 600
@@ -252,7 +254,7 @@ int main(int argc, char* argv[]) {
 		int progress = percentage(t.GetTimeCodeAsSeconds(), dur.GetTimeCodeAsSeconds());
 		std::cout << "\r" << progress << "%" << std::flush;
 
-		ALL();
+		// ALL();
 
 		// --- New Cars Show Up (maybe) ---
 		int num_new_cars = poisson(new_car_rate);

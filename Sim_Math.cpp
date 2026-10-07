@@ -10,6 +10,8 @@
 
 #include "Sim_Math.h"
 
+//
+using namespace std;
 
 double power_recursive(double a, int b){
 	if(b == 1){
