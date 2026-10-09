@@ -255,6 +255,11 @@ int main(int argc, char* argv[]) {
 		std::cout << "\r" << progress << "%" << std::flush;
 
 		// ALL();
+		// Change 1 - 2.12 sec (14.540 s to 12.421 s)
+		// This is inside the main loop, which runs once per second of simulated time.
+		// I commented out the ALL() function because removing it made the simulation run faster, and I got the same results.
+		// It doesn't change the output because the tests only check that the TimeCode class works correctly, which it does.
+		// It doesn't change any variables
 
 		// --- New Cars Show Up (maybe) ---
 		int num_new_cars = poisson(new_car_rate);
@@ -343,6 +348,23 @@ int main(int argc, char* argv[]) {
 	res.y_data = y_data;
 	res.plotted_duration = TimeCode(0, 0, DURATION_10MIN);
 	// res.plotted_duration.WasteTimeAndBeSlow();
+	// Change 2 - 1.38 sec (12.421 s to 11.038 s)
+
+	/*
+	void TimeCode::WasteTimeAndBeSlow() const {
+		int num = 0;
+		for(int i = INT_MAX; i > 2; i--)
+		{
+			num = num * i;
+		}
+	}
+	*/
+
+	// It multiplies num by i, but num starts at 0. 
+	// So it's always 0, and it's never used afterward.
+	// It's a const function, and it only changes local variables.
+	// It returns void, and num is thrown away.
+
 
 
 	generateTerminalOutput(res);
