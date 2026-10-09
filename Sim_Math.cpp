@@ -209,6 +209,8 @@ std::unordered_map<std::string, double> build_crash_prob_map()
 	}
 
 	// Step 3. Count all adscrashes on each dOW to build the map
+
+	/*
 	std::unordered_map<std::string, double> crash_prob_map;
 
 	for (int dow = 1; dow < 8; dow++)
@@ -234,6 +236,28 @@ std::unordered_map<std::string, double> build_crash_prob_map()
 		}
 		// std::cout << "Day: " << day_of_week_name(dow-1) << " count : " << count << std::endl;
 		crash_prob_map[day_of_week_name(dow - 1)] += static_cast<double>(count) / total_crashes; // add the probability of crash on this day
+	}
+	*/
+
+	// Change 4 - 4.12 sec (4.738 s to 0.617 s)
+	unordered_map<string, double> crash_prob_map;
+
+	for (int dow = 1; dow < 8; dow++) // iterate over each day (1-7 = Sunday-Saturday)
+	{
+		sqlite3_finalize(stmt); // free the previous query before making a new one
+
+		const char *third_sql_query = "SELECT COUNT(*) FROM incidents WHERE AUTOMOBILE_COUNT != 0 AND DAY_OF_WEEK = ?;";
+		rc = prepare(db, third_sql_query, &stmt);
+		sqlite3_bind_int(stmt, 1, dow); // put the day number into the ?
+
+		int count = 0;
+		if (sqlite3_step(stmt) == SQLITE_ROW)
+		{
+			count = sqlite3_column_int(stmt, 0); // the number of car crashes on this day
+		}
+
+		// For the database it's 1-7 for Sunday - Saturday, but for the function it's 0-6
+		crash_prob_map[day_of_week_name(dow - 1)] += static_cast<double>(count) / total_crashes;
 	}
 
 	sqlite3_finalize(stmt);
