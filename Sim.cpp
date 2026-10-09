@@ -245,7 +245,10 @@ int main(int argc, char* argv[]) {
 
 
 	std::cout << "Simulating traffic..." << std::endl;
-	BigInteger total_num_cars = BigInteger("0"); // number of cars that traveled, use BigInteger in case of integer overflow
+	// BigInteger total_num_cars = BigInteger("0"); // number of cars that traveled, use BigInteger in case of integer overflow
+	unsigned long long int total_num_cars = 0;
+	// Change 5 - 0.034 sec (0.617 s to 0.583 s)
+
 	std::vector<data_point_pair> data; // to store the data points
 	int num_cars = 0; // number of cars (intially 0)
 	int crash_count = 0;
@@ -266,7 +269,9 @@ int main(int argc, char* argv[]) {
 		if(num_cars >= CAP){
 			num_new_cars = 0; // road is full, no new cars
 		}
-		total_num_cars = total_num_cars + BigInteger(std::to_string(num_new_cars));
+		// total_num_cars = total_num_cars + BigInteger(std::to_string(num_new_cars));
+		total_num_cars = total_num_cars + num_new_cars;
+		// Change 5 - 0.034 sec (0.617 s to 0.583 s)
 
 		// --- Existing Cars Might Leave ---
 		// Strong assumptions of model here!
@@ -334,7 +339,10 @@ int main(int argc, char* argv[]) {
 	res.road_capacity = CAP;
 	res.new_car_rate = new_car_rate;
 	res.num_crashes = crash_count;
-	res.total_cars = total_num_cars.ToString();
+	// res.total_cars = total_num_cars.ToString();
+	res.total_cars = to_string(total_num_cars);
+	// Change 5 - 0.034 sec (0.617 s to 0.583 s)
+
 	res.count_times_map = count_times;
 
 	std::vector<int> x_data;
