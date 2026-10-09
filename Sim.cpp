@@ -248,7 +248,10 @@ int main(int argc, char* argv[]) {
 	// BigInteger total_num_cars = BigInteger("0"); // number of cars that traveled, use BigInteger in case of integer overflow
 	unsigned long long int total_num_cars = 0;
 	// Change 5 - 0.034 sec (0.617 s to 0.583 s)
-
+	// Line 248 did every addition with strings and leaked memory (new object without delete)
+	// Replaced it with a simple unsigned long long int, which is enough to hold the total number of cars for the simulation duration
+	// This way we avoid the overhead of creating BigInteger objects for every addition
+	
 	std::vector<data_point_pair> data; // to store the data points
 	int num_cars = 0; // number of cars (intially 0)
 	int crash_count = 0;
@@ -259,9 +262,7 @@ int main(int argc, char* argv[]) {
 
 		// ALL();
 		// Change 1 - 2.12 sec (14.540 s to 12.421 s)
-		// This is inside the main loop, which runs once per second of simulated time.
-		// I commented out the ALL() function because removing it made the simulation run faster, and I got the same results.
-		// It doesn't change the output because the tests only check that the TimeCode class works correctly, which it does.
+		// It ran the whole TimeCode test suite once per simulated second
 		// It doesn't change any variables
 
 		// --- New Cars Show Up (maybe) ---
@@ -271,7 +272,7 @@ int main(int argc, char* argv[]) {
 		}
 		// total_num_cars = total_num_cars + BigInteger(std::to_string(num_new_cars));
 		total_num_cars = total_num_cars + num_new_cars;
-		// Change 5 - 0.034 sec (0.617 s to 0.583 s)
+		// Change 5
 
 		// --- Existing Cars Might Leave ---
 		// Strong assumptions of model here!
@@ -322,6 +323,9 @@ int main(int argc, char* argv[]) {
 		cout << "\r" << progress << "%" << flush;
 		count_times[data[i].num_cars].push_back(data[i].t);
 		// Change 6 - 0.442 sec (0.583 s to 0.141 s)
+		// The original code copied the whole list out of the map, added one item, and copied the whole list back.
+		// So the loop got slower and slower as the lists got longer with many copies
+		// count_times[num_cars].push_back(t), adds directly without copying
 
 		/*
 		std::cout << "\r" << progress << "%" << std::flush;
@@ -347,7 +351,7 @@ int main(int argc, char* argv[]) {
 	res.num_crashes = crash_count;
 	// res.total_cars = total_num_cars.ToString();
 	res.total_cars = to_string(total_num_cars);
-	// Change 5 - 0.034 sec (0.617 s to 0.583 s)
+	// Change 5
 
 	res.count_times_map = count_times;
 
@@ -363,18 +367,7 @@ int main(int argc, char* argv[]) {
 	res.plotted_duration = TimeCode(0, 0, DURATION_10MIN);
 	// res.plotted_duration.WasteTimeAndBeSlow();
 	// Change 2 - 1.38 sec (12.421 s to 11.038 s)
-
-	/*
-	void TimeCode::WasteTimeAndBeSlow() const {
-		int num = 0;
-		for(int i = INT_MAX; i > 2; i--)
-		{
-			num = num * i;
-		}
-	}
-	*/
-
-	// It multiplies num by i, but num starts at 0. 
+	// This function multiplies num by i, but num starts at 0. 
 	// So it's always 0, and it's never used afterward.
 	// It's a const function, and it only changes local variables.
 	// It returns void, and num is thrown away.

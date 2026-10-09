@@ -240,6 +240,9 @@ std::unordered_map<std::string, double> build_crash_prob_map()
 	*/
 
 	// Change 4 - 4.12 sec (4.738 s to 0.617 s)
+	// The original code looped over every car crash for every day and asked the database "is crash X on day Y?" one at a time.
+	// New version just asks the database "how many crashes are on day Y?" for each day, which is much faster.
+	// Claude is used to understand the original code and to write the new version
 	unordered_map<string, double> crash_prob_map;
 
 	for (int dow = 1; dow < 8; dow++) // iterate over each day (1-7 = Sunday-Saturday)
