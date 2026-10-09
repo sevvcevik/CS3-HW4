@@ -319,6 +319,11 @@ int main(int argc, char* argv[]) {
 	std::unordered_map<int, std::vector<TimeCode>> count_times;
 	for(size_t i = 0; i < data.size(); i++){
 		int progress = percentage(i, data.size());
+		cout << "\r" << progress << "%" << flush;
+		count_times[data[i].num_cars].push_back(data[i].t);
+		// Change 6 - 0.442 sec (0.583 s to 0.141 s)
+
+		/*
 		std::cout << "\r" << progress << "%" << std::flush;
 		data_point_pair cur = data[i];
 		if(count_times.find(cur.num_cars) != count_times.end()){
@@ -328,6 +333,7 @@ int main(int argc, char* argv[]) {
 		} else {
 			count_times[cur.num_cars] = std::vector<TimeCode>{cur.t};
 		}
+		*/
 	}
 	std::cout << "\n---Simulation Finished---" << std::endl;
 
